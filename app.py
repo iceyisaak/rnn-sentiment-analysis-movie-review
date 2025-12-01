@@ -23,24 +23,36 @@ def decode_review(encoded_review):
 def preprocess_text(text):
     words = text.lower().split()
     encoded_review = [word_index.get(word,2)+3 for word in words]
-    padded_review = pad_sequences([encoded_review], max_len=500)
+    padded_review = pad_sequences([encoded_review], maxlen=500)
     return padded_review
 
 
-def predict_sentiment(review):
-    preprocess_input = preprocess_text(review)
-    pred = model.predict(preprocess_input)
+# def predict_sentiment(review):
+#     preprocess_input = preprocess_text(review)
+#     pred = model.predict(preprocess_input)
 
-    prediction = pred[0][0]
-    sentiment_vibe  = 'Positive' if prediction > 0.5 else 'Negative'
+#     prediction = pred[0][0]
+#     sentiment_vibe  = 'Positive' if prediction > 0.5 else 'Negative'
 
-    return sentiment_vibe, prediction
+#     return sentiment_vibe, prediction
 
 
 ##################################################################################
 
 
-st.title('Sentiment Analysis: IMDB Movie Review')
+st.title('Sentiment Analysis: IMdb Movie Review')
 st.write('Enter a movie review to classify it as Positive or Negative')
 
-text_input = st.text_area('Movie Review')
+text_input = st.text_area('Movie Review', placeholder='Please write a movie review')
+
+if st.button('Analyse Sentiment'):
+
+    preprocess_input = preprocess_text(text_input)
+    pred = model.predict(preprocess_input)
+    sentiment_score = pred[0][0]
+    sentiment_vibe = 'Positive' if sentiment_score > 0.5 else 'Negative'
+    
+    if sentiment_score > 0.5: 
+        st.success(f'The sentiment is {sentiment_vibe}: Sentiment Score: {sentiment_score}')  
+    else: 
+        st.error(f'The sentiment is {sentiment_vibe}: Sentiment Score: {sentiment_score}')
